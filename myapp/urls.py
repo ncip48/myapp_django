@@ -17,11 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from api_ocr import urls as ocr_urls
-from student_prediction import urls as student_prediction_urls
+from prediksi import urls as prediksi_url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('api/v1/', include(ocr_urls)),
-    path('prediction/student/', include(student_prediction_urls)),
+    path('prediksi/', include(prediksi_url)),
 ]

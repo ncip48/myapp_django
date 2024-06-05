@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'api_ocr', 
-    'student_prediction', 
+    'prediksi', 
 ]
 
 MIDDLEWARE = [
