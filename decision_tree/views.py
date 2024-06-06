@@ -88,21 +88,26 @@ def index_prediksi(request):
     predictions.sort(key=lambda x: x.id)
     matchCount = 0
     mismatchCount = 0
+    totalCount = 0
     for idx, true_label in enumerate(y_test):
         if true_label == y_pred[idx]:
             matchCount += 1
         else:
             mismatchCount += 1
+    totalCount = len(y_test)
     entropy = 0
     for label in np.unique(y_train):
         p = len(y_train[y_train == label]) / len(y_train)
         entropy -= p * np.log2(p)
-    accuracy = accuracy_score(y_test, y_pred)
+    accuracy = round(accuracy_score(y_test, y_pred) * 100, 2)
+    error = round(100-accuracy, 2)
     print(f'Classification Report: \n{classification_report(y_test, y_pred)}')
     context = {
         'accuracy': accuracy,
+        'error': error,
         'datas': predictions,
         'matchCount': matchCount,
+        'totalCount': totalCount,
         'mismatchCount': mismatchCount,
         'entropy': entropy
     }
