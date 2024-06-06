@@ -80,16 +80,22 @@ def predict(X_manual=None):
     X_test = sc.transform(X_manual) if X_manual is not None else sc.transform(X_test)
     classifier = DecisionTreeClassifier(criterion='entropy', random_state=0)
     classifier.fit(X_train, y_train)
-    print(X_test.shape)
-    return classifier, X_test, data_id, y_test, y_train, X_train
+    return {
+        'classifier': classifier,
+        'X_test': X_test,
+        'data_id': data_id,
+        'y_test': y_test,
+        'y_train': y_train,
+        'X_train': X_train
+    }
 
 def index_prediksi(request):
     p = predict()
-    classifier = p[0]
-    X_test = p[1]
-    data_id = p[2]
-    y_test = p[3]
-    y_train = p[4]
+    classifier = p['classifier']
+    X_test = p['X_test']
+    data_id = p['data_id']
+    y_test = p['y_test']
+    y_train = p['y_train']
     
     y_pred = classifier.predict(X_test)
     mae = mean_absolute_error(y_pred,y_test)
@@ -129,12 +135,11 @@ def index_prediksi(request):
     return render(request, 'prediksi/index.html', context)
 
 @api_view(['POST'])
-# @renderer_classes((JSONRenderer))
 def api_predict(request):
     manual = [[request.data.get('anxiety_level'),27,0,3,1,2,5,1,2,4,5,4,4,2,4,1,3,2,2,1]]
     p = predict(manual)
-    classifier = p[0]
-    X_test = p[1]
+    classifier = p['classifier']
+    X_test = p['X_test']
     
     y_pred = classifier.predict(X_test)
     context = {
