@@ -16,12 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from ocr import urls as ocr_urls
+# from ocr import urls as ocr_urls
 from decision_tree import urls as decision_tree_url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('', include(ocr_urls)),
+    # path('', include(ocr_urls)),
     path('decision_tree/', include(decision_tree_url)),
 ]
