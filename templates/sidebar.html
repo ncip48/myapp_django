@@ -1,0 +1,65 @@
+{% load static %}
+<!-- Left side column. contains the logo and sidebar -->
+<aside class="main-sidebar">
+  <!-- sidebar-->
+  <section class="sidebar position-relative">
+    <div class="multinav">
+      <div class="multinav-scroll" style="height: 100%">
+        <!-- sidebar menu-->
+        <ul class="sidebar-menu" data-widget="tree">
+          <li class="treeview">
+            <a href="#">
+              <img
+                src="{% static 'images/svg-icon/sidebar-menu/dashboard.svg' %}"
+                class="svg-icon"
+                alt=""
+              />
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="treeview">
+            <a href="#">
+              <img
+                src="{% static 'images/svg-icon/sidebar-menu/apps.svg' %}"
+                class="svg-icon"
+                alt=""
+              />
+              <span>Decision Tree</span>
+              <span class="pull-right-container">
+                <i class="fa fa-angle-right pull-right"></i>
+              </span>
+            </a>
+            <ul class="treeview-menu">
+              <li
+                class="{% if request.resolver_match.url_name == 'index_dataset' %} active {% endif %}"
+              >
+                <a href="{% url 'index_dataset' %}">
+                  <i class="ti-more"></i>
+                  <span>Dataset</span>
+                </a>
+              </li>
+              <li
+                class="{% if request.resolver_match.url_name == 'index_prediksi' %} active {% endif %}"
+              >
+                <a href="{% url 'index_prediksi' %}">
+                  <i class="ti-more"></i>
+                  <span>Prediksi</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="treeview">
+            <a href="#">
+              <img
+                src="{% static 'images/svg-icon/sidebar-menu/uielements.svg' %}"
+                class="svg-icon"
+                alt=""
+              />
+              <span>OCR</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</aside>

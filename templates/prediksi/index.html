@@ -1,66 +1,102 @@
 {% extends "../base.html" %} {% block content %}
-<h2 class="pt-3">Prediksi</h2>
-<div class="table-responsive small">
-  <table class="table table-bordered border-primary">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Anxiety Level</th>
-        <th>Self Esteem</th>
-        <th>Mental Health History</th>
-        <th>Depression</th>
-        <th>Headache</th>
-        <th>Blood Pressure</th>
-        <th>Sleep Quality</th>
-        <th>Breathing Problem</th>
-        <th>Noise Level</th>
-        <th>Living Conditions</th>
-        <th>Safety</th>
-        <th>Basic Needs</th>
-        <th>Academic Performance</th>
-        <th>Study Load</th>
-        <th>Teacher Student Relationship</th>
-        <th>Future Career Concerns</th>
-        <th>Social Support</th>
-        <th>Peer Pressure</th>
-        <th>Extracurricular Activities</th>
-        <th>Bullying</th>
-        <th>Stress Level</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- daftar task-->
-      {% if datas %} {% for data in datas %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ data.anxiety_level }}</td>
-        <td>{{ data.self_esteem }}</td>
-        <td>{{ data.mental_health_history }}</td>
-        <td>{{ data.depression }}</td>
-        <td>{{ data.headache }}</td>
-        <td>{{ data.blood_pressure }}</td>
-        <td>{{ data.sleep_quality }}</td>
-        <td>{{ data.breathing_problem }}</td>
-        <td>{{ data.noise_level }}</td>
-        <td>{{ data.living_conditions }}</td>
-        <td>{{ data.safety }}</td>
-        <td>{{ data.basic_needs }}</td>
-        <td>{{ data.academic_performance }}</td>
-        <td>{{ data.study_load }}</td>
-        <td>{{ data.teacher_student_relationship }}</td>
-        <td>{{ data.future_career_concerns }}</td>
-        <td>{{ data.social_support }}</td>
-        <td>{{ data.peer_pressure }}</td>
-        <td>{{ data.extracurricular_activities }}</td>
-        <td>{{ data.bullying }}</td>
-        <td>{{ data.stress_level }}</td>
-      </tr>
-      {% endfor %} {% else %}
-      <tr>
-        <td colspan="5">Data tidak ditemukan.</td>
-      </tr>
-      {% endif %}
-    </tbody>
-  </table>
+<div class="content-header">
+  <div class="d-flex align-items-center">
+    <div class="me-auto">
+      <h4 class="page-title">Prediksi</h4>
+      <div class="d-inline-block align-items-center">
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="#"><i class="mdi mdi-home-outline"></i></a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page">Decision Tree</li>
+            <li class="breadcrumb-item active" aria-current="page">Prediksi</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Main content -->
+<section class="content">
+  <div class="row">
+    <div class="col-12">
+      <div class="box">
+        <div class="box-header with-border">
+          <h4 class="box-title">List Prediksi</h4>
+        </div>
+        <div class="box-body">
+          <div class="table-responsive">
+            <table class="table no-margin table-hover">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>ID</th>
+                  <th>Anxiety Level</th>
+                  <th>Self Esteem</th>
+                  <th>Mental Health History</th>
+                  <th>Depression</th>
+                  <th>Headache</th>
+                  <th>Blood Pressure</th>
+                  <th>Sleep Quality</th>
+                  <th>Breathing Problem</th>
+                  <th>Noise Level</th>
+                  <th>Living Conditions</th>
+                  <th>Safety</th>
+                  <th>Basic Needs</th>
+                  <th>Academic Performance</th>
+                  <th>Study Load</th>
+                  <th>Teacher Student Relationship</th>
+                  <th>Future Career Concerns</th>
+                  <th>Social Support</th>
+                  <th>Peer Pressure</th>
+                  <th>Extracurricular Activities</th>
+                  <th>Bullying</th>
+                  <th>Stress Level</th>
+                  <th>Stress Level (Prediksi)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- daftar task-->
+                {% if datas %} {% for data in datas %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ data.id }}</td>
+                  <td>{{ data.anxiety_level }}</td>
+                  <td>{{ data.self_esteem }}</td>
+                  <td>{{ data.mental_health_history }}</td>
+                  <td>{{ data.depression }}</td>
+                  <td>{{ data.headache }}</td>
+                  <td>{{ data.blood_pressure }}</td>
+                  <td>{{ data.sleep_quality }}</td>
+                  <td>{{ data.breathing_problem }}</td>
+                  <td>{{ data.noise_level }}</td>
+                  <td>{{ data.living_conditions }}</td>
+                  <td>{{ data.safety }}</td>
+                  <td>{{ data.basic_needs }}</td>
+                  <td>{{ data.academic_performance }}</td>
+                  <td>{{ data.study_load }}</td>
+                  <td>{{ data.teacher_student_relationship }}</td>
+                  <td>{{ data.future_career_concerns }}</td>
+                  <td>{{ data.social_support }}</td>
+                  <td>{{ data.peer_pressure }}</td>
+                  <td>{{ data.extracurricular_activities }}</td>
+                  <td>{{ data.bullying }}</td>
+                  <td>{{ data.stress_level }}</td>
+                  <td>{{ data.prediction }}</td>
+                </tr>
+                {% endfor %} {% else %}
+                <tr>
+                  <td colspan="5">Data tidak ditemukan.</td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}
