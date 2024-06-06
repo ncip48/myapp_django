@@ -70,7 +70,7 @@ def index_prediksi(request):
     df_net.drop(columns=['id'], inplace=True)
     X = df_net.iloc[:, :-1].values
     y = df_net.iloc[:, -1].values
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = True)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = True)
     data_id = []
     for data_point in X_test:
         data_id.append(search_id(data_point))
@@ -99,6 +99,7 @@ def index_prediksi(request):
     for label in np.unique(y_train):
         p = len(y_train[y_train == label]) / len(y_train)
         entropy -= p * np.log2(p)
+    entropy = round(entropy, 4)
     accuracy = round(accuracy_score(y_test, y_pred) * 100, 2)
     error = round(100-accuracy, 2)
     print(f'Classification Report: \n{classification_report(y_test, y_pred)}')

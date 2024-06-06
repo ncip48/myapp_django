@@ -48,8 +48,10 @@
               </li>
             </ul>
           </li>
-          <li class="treeview">
-            <a href="#">
+          <li
+            class="{% if request.resolver_match.url_name == 'index_ocr' %} active {% endif %}"
+          >
+            <a href="{% url 'index_ocr' %}">
               <img
                 src="{% static 'images/svg-icon/sidebar-menu/uielements.svg' %}"
                 class="svg-icon"

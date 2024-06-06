@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -196,3 +197,8 @@ class OcrApiView(APIView):
         }
 
         return Response(response)
+    
+# Membuat View untuk halaman daftar task
+def index_ocr(request):
+    context = {}
+    return render(request, 'ocr.html', context)
