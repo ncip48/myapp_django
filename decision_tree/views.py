@@ -4,6 +4,9 @@ import datetime
 import logging
 import math
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
 # import class Task dari file todo/models.py
 from .models import StudentStress
 
@@ -19,6 +22,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import f1_score
+from sklearn.metrics import mean_absolute_error
 
 def search_id(data):
     # Assuming `YourModel` is the Django model representing your data
@@ -63,23 +67,37 @@ def index_dataset(request):
     # memparsing data task ke template todo/index.html dan merender nya
     return render(request, 'dataset/index.html', context)
 
-def index_prediksi(request):
+def predict(X_manual):
     df_net = pd.DataFrame(list(StudentStress.objects.all().values()))
     df_net.drop(columns = ['created_at'], inplace=True)
     df_net.drop(columns = ['updated_at'], inplace=True)
     df_net.drop(columns=['id'], inplace=True)
     X = df_net.iloc[:, :-1].values
     y = df_net.iloc[:, -1].values
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = True)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = 13)
     data_id = []
     for data_point in X_test:
         data_id.append(search_id(data_point))
     sc = StandardScaler()
     X_train = sc.fit_transform(X_train)
-    X_test = sc.transform(X_test)
+    if(X_manual):
+        X_test = sc.transform(X_manual)
+    else:
+        X_test = sc.transform(X_test)
     classifier = DecisionTreeClassifier(criterion = 'entropy', random_state = 0)
     classifier.fit(X_train, y_train)
+    return classifier, X_test, data_id, y_test, y_train, X_train
+
+def index_prediksi(request):
+    p = predict(None)
+    classifier = p[0]
+    X_test = p[1]
+    data_id = p[2]
+    y_test = p[3]
+    y_train = p[4]
+    
     y_pred = classifier.predict(X_test)
+    mae = mean_absolute_error(y_pred,y_test)
     predictions = []
     for idx, pred in enumerate(y_pred):
         prediction = StudentStress.objects.get(id=data_id[idx])
@@ -110,42 +128,32 @@ def index_prediksi(request):
         'matchCount': matchCount,
         'totalCount': totalCount,
         'mismatchCount': mismatchCount,
-        'entropy': entropy
+        'entropy': entropy,
+        'mae': mae
     }
     return render(request, 'prediksi/index.html', context)
 
-def test(request):
-    df_net = pd.DataFrame(list(StudentStress.objects.all().values()))
-    df_net.drop(columns = ['created_at'], inplace=True)
-    df_net.drop(columns = ['updated_at'], inplace=True)
-    df_net.drop(columns=['id'], inplace=True)
-    # Label encoding
-    # Buat merubah jika isi data bukan integer
-    # le = LabelEncoder()
-    # df_net['stress_level']= le.fit_transform(df_net['stress_level'])
-    # Split data into dependent/independent variables
-    X = df_net.iloc[:, :-1].values
-    y = df_net.iloc[:, -1].values
-    # Split data into test/train set
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = True)
-    print(search_id(X_test[0]))
-    # Scale dataset
-    sc = StandardScaler()
-    X_train = sc.fit_transform(X_train)
-    X_test = sc.transform(X_test)
-    # Decision Tree Classification
-    classifier = DecisionTreeClassifier(criterion = 'entropy', random_state = 0)
-    classifier.fit(X_train, y_train)
-    # Prediction
-    y_pred = classifier.predict(X_test)
-    # print(np.concatenate((y_pred.reshape(len(y_pred), 1), y_test.reshape(len(y_test), 1)), 1))
-    # Accuracy
-    accuracy = accuracy_score(y_test, y_pred)
-    # Classification report
-    print(f'Classification Report: \n{classification_report(y_test, y_pred)}')
-    # F1 score
-    context = {
-        'accuracy': accuracy
-    }
-    # print(f"F1 Score : {f1_score(y_test, y_pred, average='micro')}")
-    return render(request, 'empty/index.html', context)
+class PredictView(APIView):
+    def get(self, request, *args, **kwargs):
+        X_test = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2]]
+        p = predict(X_test)
+        classifier = p[0]
+        X_test = p[1]
+        data_id = p[2]
+        y_test = p[3]
+        y_train = p[4]
+    
+        y_pred = classifier.predict(X_test)
+        # print(np.concatenate((y_pred.reshape(len(y_pred), 1), y_test.reshape(len(y_test), 1)), 1))
+        # Accuracy
+        accuracy = accuracy_score(y_test, y_pred)
+        # Classification report
+        print(f'Classification Report: \n{classification_report(y_test, y_pred)}')
+        # F1 score
+        context = {
+            'accuracy': accuracy,
+            'prediction': y_pred
+        }
+        # print(f"F1 Score : {f1_score(y_test, y_pred, average='micro')}")
+        # return render(request, 'empty/index.html', context)
+        return Response(context)
