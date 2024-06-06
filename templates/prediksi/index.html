@@ -28,7 +28,7 @@
         </div>
         <div class="box-body">
           <div class="table-responsive">
-            <table class="table no-margin table-hover">
+            <table class="table no-margin table-hover" id="items-table">
               <thead>
                 <tr>
                   <th>#</th>
@@ -83,8 +83,24 @@
                   <td>{{ data.peer_pressure }}</td>
                   <td>{{ data.extracurricular_activities }}</td>
                   <td>{{ data.bullying }}</td>
-                  <td>{{ data.stress_level }}</td>
-                  <td>{{ data.prediction }}</td>
+                  <td>
+                    {% if data.stress_level == 0 %}
+                    <span class="label label-success">Rendah</span>
+                    {% elif data.stress_level == 1 %}
+                    <span class="label label-warning">Sedang</span>
+                    {% elif data.stress_level == 2 %}
+                    <span class="label label-danger">Tinggi</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if data.prediction == 0 %}
+                    <span class="label label-success">Rendah</span>
+                    {% elif data.prediction == 1 %}
+                    <span class="label label-warning">Sedang</span>
+                    {% elif data.prediction == 2 %}
+                    <span class="label label-danger">Tinggi</span>
+                    {% endif %}
+                  </td>
                 </tr>
                 {% endfor %} {% else %}
                 <tr>
