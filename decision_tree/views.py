@@ -4,7 +4,8 @@ import datetime
 import logging
 import math
 
-from rest_framework.views import APIView
+from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 # import class Task dari file todo/models.py
@@ -67,29 +68,23 @@ def index_dataset(request):
     # memparsing data task ke template todo/index.html dan merender nya
     return render(request, 'dataset/index.html', context)
 
-def predict(X_manual):
+def predict(X_manual=None):
     df_net = pd.DataFrame(list(StudentStress.objects.all().values()))
-    df_net.drop(columns = ['created_at'], inplace=True)
-    df_net.drop(columns = ['updated_at'], inplace=True)
-    df_net.drop(columns=['id'], inplace=True)
+    df_net.drop(columns=['created_at', 'updated_at', 'id'], inplace=True)
     X = df_net.iloc[:, :-1].values
     y = df_net.iloc[:, -1].values
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = 13)
-    data_id = []
-    for data_point in X_test:
-        data_id.append(search_id(data_point))
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=len(X)-len(X_manual), random_state=13) if X_manual is not None else train_test_split(X, y, test_size=0.3, random_state=13)
+    data_id = [search_id(data_point) for data_point in X_test] if X_manual is None else []
     sc = StandardScaler()
     X_train = sc.fit_transform(X_train)
-    if(X_manual):
-        X_test = sc.transform(X_manual)
-    else:
-        X_test = sc.transform(X_test)
-    classifier = DecisionTreeClassifier(criterion = 'entropy', random_state = 0)
+    X_test = sc.transform(X_manual) if X_manual is not None else sc.transform(X_test)
+    classifier = DecisionTreeClassifier(criterion='entropy', random_state=0)
     classifier.fit(X_train, y_train)
+    print(X_test.shape)
     return classifier, X_test, data_id, y_test, y_train, X_train
 
 def index_prediksi(request):
-    p = predict(None)
+    p = predict()
     classifier = p[0]
     X_test = p[1]
     data_id = p[2]
@@ -133,27 +128,16 @@ def index_prediksi(request):
     }
     return render(request, 'prediksi/index.html', context)
 
-class PredictView(APIView):
-    def get(self, request, *args, **kwargs):
-        X_test = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2]]
-        p = predict(X_test)
-        classifier = p[0]
-        X_test = p[1]
-        data_id = p[2]
-        y_test = p[3]
-        y_train = p[4]
+@api_view(['POST'])
+# @renderer_classes((JSONRenderer))
+def api_predict(request):
+    manual = [[request.data.get('anxiety_level'),27,0,3,1,2,5,1,2,4,5,4,4,2,4,1,3,2,2,1]]
+    p = predict(manual)
+    classifier = p[0]
+    X_test = p[1]
     
-        y_pred = classifier.predict(X_test)
-        # print(np.concatenate((y_pred.reshape(len(y_pred), 1), y_test.reshape(len(y_test), 1)), 1))
-        # Accuracy
-        accuracy = accuracy_score(y_test, y_pred)
-        # Classification report
-        print(f'Classification Report: \n{classification_report(y_test, y_pred)}')
-        # F1 score
-        context = {
-            'accuracy': accuracy,
-            'prediction': y_pred
-        }
-        # print(f"F1 Score : {f1_score(y_test, y_pred, average='micro')}")
-        # return render(request, 'empty/index.html', context)
-        return Response(context)
+    y_pred = classifier.predict(X_test)
+    context = {
+        'prediction': y_pred[0]
+    }
+    return Response(context)
